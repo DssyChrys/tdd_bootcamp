@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Response; 
 use App\Models\Chirp;
 use Illuminate\Http\Request;
 
@@ -10,9 +10,9 @@ class ChirpController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response    
     {
-        //
+        return response('Hello, World!');
     }
 
     /**
