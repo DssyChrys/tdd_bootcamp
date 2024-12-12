@@ -54,4 +54,21 @@ class LoginTest extends TestCase
     $reponse->assertSessionHasErrors(['message']);
     }
 
+
+
+    public function test_les_chirps_sont_affiches_sur_la_page_d_accueil()
+    {
+    
+    $this->withoutExceptionHandling();
+
+    $utilisateur = User::factory()->create();
+    $this->actingAs($utilisateur);
+
+    $chirps = Chirp::factory()->count(3)->create();
+    $reponse = $this->get('/dashboard');
+    foreach ($chirps as $chirp) {
+    $reponse->assertSee($chirp->message);
+    }
+    }
+
 }
