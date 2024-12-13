@@ -101,4 +101,31 @@ class LoginTest extends TestCase
     'id' => $chirp->id,
     ]);
     }
+
+
+    public function test_un_utilisateur_ne_peut_pas_modifier_le_chirp_d_un_autre_utilisateur(){
+        $utilisateur1 = User::factory()->create();
+        $utilisateur2 = User::factory()->create();
+
+        //creer un chirp avec utilisateur1
+        $chirp = Chirp::factory()->create(['user_id' => $utilisateur1->id]);
+
+        // essayer de modifier le chirp avec utilisateur2
+        $reponse = $this->actingAs($utilisateur2)->put("/chirps/{$chirp->id}", [
+            'message' => 'Nouveau message'
+        ]);
+        $reponse->assertStatus(403);
+    }
+    public function test_un_utilisateur_ne_peut_pas_supprimer_le_chirp_d_un_autre_utilisateur(){
+        $utilisateur1 = User::factory()->create();
+        $utilisateur2 = User::factory()->create();
+
+        $chirp = Chirp::factory()->create(['user_id' => $utilisateur1->id]);
+
+        // essayer de supprimer le chirp avec utilisateur2
+        $reponse = $this->actingAs($utilisateur2)->delete("/chirps/{$chirp->id}", [
+            'message' => 'Nouveau message'
+        ]);
+        $reponse->assertStatus(403);
+    }
 }
