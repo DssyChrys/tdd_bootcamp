@@ -163,4 +163,30 @@ class LoginTest extends TestCase
         $reponse->assertSessionHasErrors('message'); 
     }
 
+
+    public function test_filtrage_des_chirps_par_date()
+    {
+    $this->withoutExceptionHandling();
+
+    $utilisateur = User::factory()->create();
+    $this->actingAs($utilisateur);
+
+    // Créer un Chirp récent
+    $recentChirp = Chirp::factory()->create([
+        'user_id' => $utilisateur->id,
+        'created_at' => now()
+    ]);
+
+    // Créer un Chirp ancien
+    $oldChirp = Chirp::factory()->create([
+        'user_id' => $utilisateur->id,
+        'created_at' => now()->subDays(8)
+    ]);
+
+    // Vérifier que seulement le chirp récent est visible
+    $reponse = $this->get('/');
+    $reponse->assertSee($recentChirp->message);
+    $reponse->assertDontSee($oldChirp->message);
+    }
+
 }

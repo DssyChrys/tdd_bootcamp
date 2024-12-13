@@ -19,6 +19,7 @@ class ChirpFactory extends Factory
         return [
             'message' => $this->faker->sentence(),
             'user_id' => \App\Models\User::factory(), 
+            'created_at' => now(), 
         ];
     }
 }
