@@ -128,4 +128,22 @@ class LoginTest extends TestCase
         ]);
         $reponse->assertStatus(403);
     }
+
+    public function test_validation_pour_la_mise_a_jour_dun_chirp()
+    {
+    $utilisateur = User::factory()->create();
+    $chirp = Chirp::factory()->create(['user_id' => $utilisateur->id]);
+
+    // Test du message vide
+    $reponse = $this->actingAs($utilisateur)->put("/chirps/{$chirp->id}", [
+        'message' => ''
+    ]);
+    $reponse->assertSessionHasErrors('message');
+
+    // Test du message trop long
+    $reponse = $this->actingAs($utilisateur)->put("/chirps/{$chirp->id}", [
+        'message' => str_repeat('a', 256)
+    ]);
+    $reponse->assertSessionHasErrors('message');
+    }
 }
