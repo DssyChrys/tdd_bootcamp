@@ -16,12 +16,21 @@ class ChirpController extends Controller
         $chirps = Chirp::where('created_at', '>=', now()->subDays(7))
         ->latest()
         ->get();
-        
+
         return view('chirps.index', [
 
             'chirps' => Chirp::with('user')->latest()->get(),
 
         ]);
+    }
+
+    public function like(Request $request, Chirp $chirp)
+    {
+        $chirp->likes()->updateOrCreate([
+            'user_id' => $request->user()->id,
+        ]);
+
+        return response()->json(['message' => 'Chirp liked successfully'], 200);
     }
 
     /**

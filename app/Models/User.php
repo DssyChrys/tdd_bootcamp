@@ -10,6 +10,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    public function chirpLikes()
+    {
+        return $this->hasMany(ChirpLike::class);
+    }
+    
     public function chirps(): HasMany
 
     {

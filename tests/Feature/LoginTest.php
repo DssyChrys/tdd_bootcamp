@@ -189,4 +189,36 @@ class LoginTest extends TestCase
     $reponse->assertDontSee($oldChirp->message);
     }
 
+
+
+    public function test_utilisateur_peut_aimer_un_chirp()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create();
+
+        // liker le Chirp
+        $reponse = $this->actingAs($utilisateur)->post("/chirps/{$chirp->id}/like");
+
+        $reponse->assertStatus(404);
+
+        // Vérification en base de données
+        $this->assertDatabaseHas('chirp_likes', [
+            'chirp_id' => $chirp->id,
+            'user_id' => $utilisateur->id,
+        ]);
+    }
+    
+    public function test_utilisateur_ne_peut_pas_aimer_deux_fois_le_meme_chirp()
+    {
+        $utilisateur = User::factory()->create();
+        $chirp = Chirp::factory()->create();
+    
+        // Liker le Chirp une première fois
+        $this->actingAs($utilisateur)->post("/chirps/{$chirp->id}/like");
+    
+        // Essayer de liker le même chirp à nouveau
+        $reponse = $this->actingAs($utilisateur)->post("/chirps/{$chirp->id}/like");
+    
+        $reponse->assertStatus(404); // Vérifier que l'action échoue avec un statut d'erreur
+    }
 }
