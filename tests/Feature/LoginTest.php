@@ -146,4 +146,21 @@ class LoginTest extends TestCase
     ]);
     $reponse->assertSessionHasErrors('message');
     }
+
+
+    public function test_limitation_du_nombre_de_chirps_par_utilisateur()
+    {
+        $utilisateur = User::factory()->create();
+    
+        // creer 10 chirps
+        Chirp::factory()->count(10)->create(['user_id' => $utilisateur->id]);
+    
+        // essayer de créer un 11è chirps
+        $reponse = $this->actingAs($utilisateur)->post('/chirps', [
+            'message' => 'Un autre chirp'
+        ]);
+        
+        $reponse->assertSessionHasErrors('message'); 
+    }
+
 }
